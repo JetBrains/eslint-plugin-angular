@@ -1,0 +1,30 @@
+name: Publish
+
+on:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    publish:
+        runs-on: macos-latest
+        steps:
+            -   name: tag
+                id: tag
+                run: echo "##[set-output name=name;]${GITHUB_REF/refs\/tags\//}"
+            -   uses: actions/checkout@v1
+                with:
+                    ref: ${{ steps.tag.outputs.name }}
+            -   name: node
+                run: echo "##[set-output name=versoin;]$(cat .nvmrc)"
+                id: node
+            -   uses: actions/setup-node@v1
+                with:
+                    node-version: "${{ steps.node.outputs.version }}"
+            -   name: Publish
+                run: |
+                    npm ci
+                    echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
+                    npm publish --access public
+                env:
+                    NPM_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
