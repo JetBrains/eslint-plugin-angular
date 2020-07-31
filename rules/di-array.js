@@ -1,5 +1,8 @@
 /**
  * disallow array expression in form of DI
+ *
+ * @version v4.0.2
+ * @category bestPractice
  */
 
 'use strict';
@@ -19,7 +22,7 @@ module.exports = {
                 return;
             }
             if (fn.parent.type === 'ArrayExpression') {
-                context.report(fn, 'Use ArrayExpression');
+                context.report(fn, 'You should not use array expression for DI');
             }
         }
 

@@ -108,6 +108,7 @@ These are rules designed to prevent you from making mistakes. They either prescr
  * [controller-as-vm](docs/rules/controller-as-vm.md) - require and specify a capture variable for `this` in controllers ([y032](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y032))
  * [controller-as](docs/rules/controller-as.md) - disallow assignments to `$scope` in controllers ([y031](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y031))
  * [deferred](docs/rules/deferred.md) - use `$q(function(resolve, reject){})` instead of `$q.deferred`
+ * [di-array](docs/rules/di-array.md) - 
  * [di-unused](docs/rules/di-unused.md) - disallow unused DI parameters
  * [directive-restrict](docs/rules/directive-restrict.md) - disallow any other directive restrict than 'A' or 'E' ([y074](https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md#style-y074))
  * [empty-controller](docs/rules/empty-controller.md) - disallow empty controllers
