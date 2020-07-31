@@ -68,6 +68,7 @@ module.exports = {
             'angular?factory': reportUnusedVariables,
             'angular?filter': reportUnusedVariables,
             'angular?inject': reportUnusedVariables,
+            'angular?component': reportUnusedVariables,
             'angular?run': reportUnusedVariables,
             'angular?service': reportUnusedVariables,
             'angular?provider': function(callee, providerFn, $get) {

@@ -145,15 +145,19 @@ module.exports = {
             'angular?animation': checkDi,
             'angular?config': checkDi,
             'angular?controller': checkDi,
-            'angular?directive': checkDi,
             'angular?factory': checkDi,
             'angular?filter': checkDi,
             'angular?inject': checkDi,
+            'angular?component': checkDi,
             'angular?run': checkDi,
             'angular?service': checkDi,
             'angular?provider': function(callee, providerFn, $get) {
                 checkDi(null, providerFn);
                 checkDi(null, $get);
+            },
+            'angular?directive': function(callee, directiveFn, controllerFn) {
+                checkDi(callee, directiveFn);
+                checkDi(callee, controllerFn);
             },
             AssignmentExpression: function(node) {
                 maybeNoteInjection(node);

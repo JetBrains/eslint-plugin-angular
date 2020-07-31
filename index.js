@@ -62,7 +62,6 @@ module.exports = {
                 'angular/controller-as': 2,
                 'angular/deferred': 2,
                 'angular/di-unused': 2,
-                'angular/di-array': 2,
                 'angular/directive-restrict': 2,
                 'angular/empty-controller': 2,
                 'angular/no-controller': 2,
