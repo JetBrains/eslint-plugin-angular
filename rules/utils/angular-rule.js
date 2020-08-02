@@ -193,6 +193,9 @@ function angularRule(ruleDefinition) {
         } else {
             node = callExpressionNode.arguments[1];
         }
+        if (node && node.type === 'ObjectExpression') {
+            node = (node.properties.find((property) => (property.key.name === 'controller')) || {}).value;
+        }
         if (!node) {
             return;
         }
@@ -201,21 +204,6 @@ function angularRule(ruleDefinition) {
         }
         if (node.type === 'FunctionExpression' || node.type === 'ArrowFunctionExpression' || node.type === 'FunctionDeclaration') {
             return node;
-        }
-
-        if (node.type === 'ObjectExpression') {
-            var controller;
-            node.properties.forEach(function(property) {
-                if (property.key.name === 'controller') {
-                    if (property.value.type === 'FunctionExpression' || property.value.type === 'ArrowFunctionExpression') {
-                        controller = property.value;
-                    }
-                    if (property.value.type === 'ArrayExpression') {
-                        controller = property.value.elements[property.value.elements.length - 1];
-                    }
-                }
-            });
-            return controller;
         }
 
         if (node.type !== 'Identifier') {
@@ -288,46 +276,31 @@ function angularRule(ruleDefinition) {
     }
 
     function assembleDirectiveArguments(node) {
-        return [node.callExpression, node.fn, findDirectiveFunction(node.fn)];
+        return [node.callExpression, node.fn, findControllerFunction(node.fn)];
     }
 
-    function findDirectiveFunction(directiveFn) {
+    function findControllerFunction(directiveFn) {
         if (!directiveFn) {
             return;
         }
+        const objectExpressionNode = (directiveFn.body.type === 'ObjectExpression') ?
+            (directiveFn.body) :
+            (directiveFn.body.body.find((statement) => (statement.type === 'ReturnStatement' && statement.argument.type === 'ObjectExpression')) || {}).argument;
 
-        var controllerFn;
-        var returnFn;
-        if (directiveFn.body.type !== 'BlockStatement') {
-            returnFn = directiveFn.body.properties;
-            returnFn.forEach(function(arg) {
-                if (arg.key.name === 'controller' && (arg.value.type === 'FunctionExpression' || arg.value.type === 'ArrowFunctionExpression')) {
-                    controllerFn = arg.value;
+        if (objectExpressionNode) {
+            const properties = objectExpressionNode.properties;
+            const controllerPropertyNode = properties.find((arg) => (arg.key.name === 'controller'));
+            if (controllerPropertyNode) {
+                let controllerFn = controllerPropertyNode.value;
+                if (controllerFn.type === 'ArrayExpression') {
+                    controllerFn = controllerFn.elements[controllerFn.elements.length - 1];
                 }
-                if (arg.value.type === 'ArrayExpression') {
-                    controllerFn = arg.value.elements[arg.value.elements.length - 1];
+                if (controllerFn.type === 'FunctionExpression' || controllerFn.type === 'ArrowFunctionExpression') {
+                    return controllerFn;
                 }
-            });
-            return controllerFn;
-        }
-
-        directiveFn.body.body.forEach(function(statement) {
-            if (statement.type === 'ReturnStatement' && statement.argument.type === 'ObjectExpression') {
-                returnFn = statement.argument.properties;
-                returnFn.forEach(function(arg) {
-                    if (arg.key.name === 'controller') {
-                        if (arg.value.type === 'FunctionExpression' || arg.value.type === 'ArrowFunctionExpression') {
-                            controllerFn = arg.value;
-                        }
-                        if (arg.value.type === 'ArrayExpression') {
-                            controllerFn = arg.value.elements[arg.value.elements.length - 1];
-                        }
-                    }
-                });
             }
-        });
-
-        return controllerFn;
+        }
+        return null;
     }
 
     /**
