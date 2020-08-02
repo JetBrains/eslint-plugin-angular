@@ -242,6 +242,20 @@ valid.push({
     options: ['function']
 });
 
+[{
+    code: 'angular.module("").component("", {controller: function(myService){}});',
+    options: ['function']
+}, {
+    code: 'angular.module("").directive("", function() {return {controller: function(myService){}}});',
+    options: ['function']
+}].forEach(function(testCase) {
+    valid.push(testCase);
+    invalid.push(Object.assign({}, testCase, {
+        options: ['array'],
+        errors: [{message: 'You should use the array syntax for DI'}]
+    }));
+});
+
 // ------------------------------------------------------------------------------
 // Tests
 // ------------------------------------------------------------------------------
